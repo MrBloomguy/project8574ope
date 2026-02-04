@@ -12,7 +12,7 @@ const ERC20_ABI = [
 
 const CHALLENGE_FACTORY_ABI = [
   "function createP2PChallenge(address participant, address paymentToken, uint256 stakeAmount, uint256 pointsReward, string metadataURI) public returns (uint256)",
-  "function acceptP2PChallenge(uint256 challengeId) public",
+  "function acceptP2PChallenge(uint256 challengeId, uint256 participantSide) public payable",
   "function claimStake(uint256 challengeId) public",
   "function challenges(uint256) public view returns (uint256 id, uint8 challengeType, address creator, address participant, address paymentToken, uint256 stakeAmount, uint256 pointsReward, uint8 status, address winner, uint256 createdAt, uint256 resolvedAt, string metadataURI)",
 ];
@@ -180,7 +180,8 @@ export async function acceptChallenge(
   privyWallet: any,
   addresses: ContractAddresses,
   challengeId: number,
-  stakeAmountUSDC: number
+  stakeAmountUSDC: number,
+  participantSide: number // 0 = YES, 1 = NO (opposite of creator's side)
 ): Promise<string> {
   if (!privyWallet) throw new Error("Privy wallet not connected");
 
@@ -204,8 +205,8 @@ export async function acceptChallenge(
       signer
     );
 
-    console.log("Accepting challenge:", challengeId);
-    const tx = await factoryContract.acceptP2PChallenge(challengeId);
+    console.log("Accepting challenge:", challengeId, "with side:", participantSide);
+    const tx = await factoryContract.acceptP2PChallenge(challengeId, participantSide);
     const receipt = await tx.wait();
 
     if (!receipt) throw new Error("Challenge acceptance failed");

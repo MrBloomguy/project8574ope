@@ -264,11 +264,16 @@ export function ChallengeCard({
       let transactionHash = null;
       try {
         console.log(`⛓️ Signing blockchain transaction for challenge #${challenge.id}...`);
+        // Determine the opposite side of what the creator chose
+        const creatorSide = challenge.challengerSide || 'YES';
+        const participantSide = creatorSide === 'YES' ? 1 : 0; // 0 = YES, 1 = NO
+        
         const txResult = await blockchainAcceptP2PChallenge({ 
           challengeId: challenge.id,
           stakeAmount: String(challenge.amount),
           paymentToken: challenge.paymentTokenAddress || "",
-          pointsReward: 0
+          pointsReward: 0,
+          participantSide
         } as any);
         transactionHash = txResult.transactionHash;
         console.log(`✅ Blockchain transaction signed: ${transactionHash}`);
@@ -305,11 +310,15 @@ export function ChallengeCard({
       let transactionHash = null;
       try {
         console.log(`⛓️ Creator signing blockchain transaction for challenge #${challenge.id}...`);
+        // Creator's side is already set, use it directly (0 = YES, 1 = NO)
+        const creatorSideValue = challenge.challengerSide === 'YES' ? 0 : 1;
+        
         const txResult = await blockchainAcceptP2PChallenge({ 
           challengeId: challenge.id,
           stakeAmount: String(challenge.amount),
           paymentToken: challenge.paymentTokenAddress || "",
-          pointsReward: 0
+          pointsReward: 0,
+          participantSide: creatorSideValue
         } as any);
         transactionHash = txResult.transactionHash;
         console.log(`✅ Creator blockchain transaction signed: ${transactionHash}`);

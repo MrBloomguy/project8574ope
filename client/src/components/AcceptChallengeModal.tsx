@@ -214,14 +214,20 @@ export function AcceptChallengeModal({
         console.log('   Challenge details for contract call:', {
           id: Number(enrichedChallenge.id),
           stakeAmount: stakeWei,
-          paymentToken: enrichedChallenge.paymentTokenAddress || '0x833589fCD6eDb6E08f4c7C32D4f71b3566dA8860'
+          paymentToken: enrichedChallenge.paymentTokenAddress || '0x833589fCD6eDb6E08f4c7C32D4f71b3566dA8860',
+          creatorSide: creatorSide,
+          opponentSide: opponentSide
         });
+
+        // Convert side string to enum value (0 = YES, 1 = NO)
+        const participantSideValue = opponentSide === 'YES' ? 0 : 1;
 
         const result = await acceptP2PChallenge({
           challengeId: Number(enrichedChallenge.id),
           stakeAmount: stakeWei,
           paymentToken: enrichedChallenge.paymentTokenAddress || '0x833589fCD6eDb6E08f4c7C32D4f71b3566dA8860',
-          pointsReward: '0'
+          pointsReward: '0',
+          participantSide: participantSideValue
         });
 
         console.log('✅ Transaction successful:', result);

@@ -11,7 +11,8 @@ const ERC20_ABI = [
 
 const CHALLENGE_FACTORY_ABI = [
   'function createP2PChallenge(address participant, address paymentToken, uint256 stakeAmount, uint256 pointsReward, string calldata metadataURI) returns (uint256)',
-  'function acceptP2PChallenge(uint256 challengeId)',
+  'function acceptP2PChallenge(uint256 challengeId, uint256 participantSide) payable',
+  'function challenges(uint256 challengeId) view returns (tuple(uint256 id, uint8 challengeType, address creator, address participant, address paymentToken, uint256 stakeAmount, uint256 pointsReward, uint8 status, address winner, uint256 createdAt, uint256 resolvedAt, string metadataURI, uint8 creatorSide, uint8 participantSide, bool creatorStaked, bool participantStaked, uint256 stakedAt, uint256 refundRequestedAt, bool refundAccepted) challenge)',
 ];
 
 interface CreateP2PChallengeParams {
@@ -27,6 +28,7 @@ interface AcceptChallengeParams {
   stakeAmount: string; // in wei
   paymentToken: string;
   pointsReward: string;
+  participantSide: number; // 0 = YES, 1 = NO (opposite of creator's side)
 }
 
 interface TransactionResult {
@@ -627,13 +629,14 @@ export function useBlockchainChallenge() {
         // Contract supports both ETH and ERC20 tokens
         const isNativeETH = checksummedToken === '0x0000000000000000000000000000000000000000';
         console.log(`💰 Is native ETH: ${isNativeETH}, Stake: ${stakeWei.toString()}`);
+        console.log(`🎯 Participant Side: ${params.participantSide === 0 ? 'YES' : 'NO'}`);
 
         let tx;
         if (isNativeETH) {
           console.log(`✅ Sending ${stakeWei.toString()} wei as transaction value`);
-          tx = await contract.acceptP2PChallenge(params.challengeId, { value: stakeWei });
+          tx = await contract.acceptP2PChallenge(params.challengeId, params.participantSide, { value: stakeWei });
         } else {
-          tx = await contract.acceptP2PChallenge(params.challengeId);
+          tx = await contract.acceptP2PChallenge(params.challengeId, params.participantSide);
         }
 
         console.log(`⏳ Transaction submitted: ${tx.hash}`);

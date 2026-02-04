@@ -8,21 +8,15 @@ dotenv.config({ path: path.join(__dirname, "..", ".env") });
 
 const CONTRACTS = [
   {
-    name: "BantahPoints",
-    address: "0x3Fc4Eb09540625A07AB7c485c8e2c03a0F15FDCB",
-    constructorArgs: ["Bantah Points", "BPTS", "18", "1000000000000000000000000"], // 1M tokens
-  },
-  {
     name: "ChallengeEscrow",
     address: "0xC107f8328712998abBB2cCf559f83EACF476AE82",
-    constructorArgs: [],
+    constructorArgs: ["0xcE1D04A1830035Aa117A910f285818FF1AFca621"], // challengeFactory
   },
   {
     name: "ChallengeFactory",
     address: "0xcE1D04A1830035Aa117A910f285818FF1AFca621",
     constructorArgs: [
-      "0x3Fc4Eb09540625A07AB7c485c8e2c03a0F15FDCB", // BantahPoints
-      "0xC107f8328712998abBB2cCf559f83EACF476AE82", // ChallengeEscrow
+      "0xC107f8328712998abBB2cCf559f83EACF476AE82", // ChallengeEscrow (stakeEscrow)
       "0xb843A2D0D4B9E628500d2E0f6f0382e063C14a95", // Admin
       "0xb843A2D0D4B9E628500d2E0f6f0382e063C14a95", // Platform Fee Recipient
     ],
@@ -31,7 +25,6 @@ const CONTRACTS = [
     name: "PointsEscrow",
     address: "0xCfAa7FCE305c26F2429251e5c27a743E1a0C3FAf",
     constructorArgs: [
-      "0x3Fc4Eb09540625A07AB7c485c8e2c03a0F15FDCB", // BantahPoints
       "0xcE1D04A1830035Aa117A910f285818FF1AFca621", // ChallengeFactory
     ],
   },

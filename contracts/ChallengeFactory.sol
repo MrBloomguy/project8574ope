@@ -43,7 +43,6 @@ contract ChallengeFactory is ReentrancyGuard, Ownable {
     }
     
     // State variables
-    BantahPoints public pointsToken;
     address public admin;         // Authorized to sign resolutions
     uint256 public nextChallengeId = 1;
     
@@ -109,12 +108,8 @@ contract ChallengeFactory is ReentrancyGuard, Ownable {
     );
     
     // Constructor
-    constructor(address _pointsToken, address _admin) {
-        require(_pointsToken != address(0), "Invalid points token");
-        require(_admin != address(0), "Invalid admin");
-        pointsToken = BantahPoints(_pointsToken);
-        admin = _admin;
-    }
+    constructor(address _admin) {
+        require(_admin != address(0), "Invalid admin"
     
     /**
      * @dev Create an admin-created challenge (betting pool)
